@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QR + UTM Studio — Know which flyer brought them in | Nymrel Tools</title>
+<meta name="description" content="Generate QR codes with UTM tracking built in. Print one on a flyer or menu, then watch the source show up in your analytics. Free, runs in your browser.">
+<link rel="canonical" href="https://nymrel.com/tools/qr-utm-generator">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Nymrel Tools">
+<meta property="og:title" content="QR + UTM Studio — Know which flyer brought them in">
+<meta property="og:description" content="Generate QR codes with UTM tracking built in. Print one on a flyer or menu, then watch the source show up in your analytics. Free, runs in your browser.">
+<meta property="og:url" content="https://nymrel.com/tools/qr-utm-generator">
+<meta property="og:image" content="https://nymrel.com/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="QR + UTM Studio — Know which flyer brought them in">
+<meta name="twitter:description" content="Generate QR codes with UTM tracking built in. Print one on a flyer or menu, then watch the source show up in your analytics.">
+<meta name="twitter:image" content="https://nymrel.com/assets/og.png">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preload" href="/assets/fonts/instrumentserif-normal-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/instrumentsans-normal-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/fonts/fonts.css">
+<link rel="stylesheet" href="/assets/site.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://nymrel.com/tools/qr-utm-generator#app",
+      "name": "QR + UTM Studio",
+      "url": "https://nymrel.com/tools/qr-utm-generator",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web browser",
+      "description": "Generate QR codes with campaign tracking baked into the destination URL, so printed materials report where customers came from.",
+      "publisher": {
+        "@id": "https://nymrel.com/#organization"
+      },
+      "offers": [
+        {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "name": "Free"
+        },
+        {
+          "@type": "Offer",
+          "price": "9",
+          "priceCurrency": "USD",
+          "name": "Deluxe"
+        }
+      ],
+      "creator": {
+        "@id": "https://nymrel.com/#organization"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Tools",
+          "item": "https://nymrel.com/tools"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "QR + UTM Studio",
+          "item": "https://nymrel.com/tools/qr-utm-generator"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is my data safe?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Everything runs in your browser. Nothing you enter — the URL or the campaign name — leaves your device."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need Google Analytics for the tracking to work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. UTM parameters are a URL standard, not a Google feature. Any analytics tool that reads them — GA4, Plausible, Fathom, Matomo — will show the source, medium, and campaign automatically."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I know which printed code is which?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Save each one to the campaign log below the generator. It keeps the campaign name, the tagged URL, and the date, right in your browser."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What's the difference between the free tool and Deluxe?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Free gives you unlimited QR codes with UTM tracking, PNG downloads, and the campaign log. Deluxe adds SVG export for print shops, batch generation, a logo-clearance guide, and a print-ready A4 sheet layout."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I add my logo to the middle of the QR code?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Keep it small and use a high error-correction level so the code still scans with part of the middle covered. Deluxe includes a clearance guide showing exactly how much you can cover at each level."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+<style>
+  .more-fields { margin: 0.2rem 0 0.8rem; }
+  .more-fields summary {
+    cursor: pointer; list-style: none; padding: 0.4rem 0;
+    font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-dim);
+  }
+  .more-fields summary::-webkit-details-marker { display: none; }
+  .more-fields summary::before { content: "+ "; color: var(--brass); }
+  .more-fields[open] summary::before { content: "\2212 "; }
+
+  .qr-log-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  table.data td.url-cell { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  table.data .row-actions { display: flex; gap: 8px; white-space: nowrap; }
+  table.data .row-actions button {
+    font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase;
+    letter-spacing: 0.08em; background: transparent; border: 1px solid var(--line-strong);
+    color: var(--ink-dim); border-radius: 6px; padding: 4px 9px; cursor: pointer;
+  }
+  table.data .row-actions button:hover { border-color: var(--brass); color: var(--brass-bright); }
+  @media (max-width: 640px) { table.data td.url-cell { max-width: 140px; } }
+
+  .qr-frame {
+    display: flex; flex-direction: column; align-items: center; gap: 1rem;
+    padding: 2.2rem; background: var(--bg-deep); border: 1px solid var(--line);
+    border-radius: var(--r); margin-bottom: 0.9rem; min-height: 300px; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .qr-frame img { width: 300px; height: 300px; max-width: 100%; background: #fff; border-radius: 8px; padding: 12px; }
+  .qr-frame .empty-state { padding: 1rem 1.2rem; }
+  .qr-frame.has-code::after {
+    content: ""; position: absolute; left: 10%; right: 10%; height: 2px; border-radius: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    top: 10%; opacity: 0.9; animation: qr-scan 2.4s ease-in-out infinite; pointer-events: none;
+  }
+  @keyframes qr-scan { 0%, 100% { top: 10%; } 50% { top: 86%; } }
+  @media (prefers-reduced-motion: reduce) { .qr-frame.has-code::after { animation: none; opacity: 0; } }
+
+  .qr-caption { text-align: center; color: var(--ink-faint); font-size: 0.74rem; letter-spacing: 0.04em; margin: 0 0 1.3rem; }
+
+  #logTableBody tr { animation: log-row-in 0.35s ease-out; }
+  @keyframes log-row-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { #logTableBody tr { animation: none; } }
+
+  /* .field-msg/.tag/.hint-once set their own `display`, which otherwise beats the
+     browser's default [hidden] rule — force it back off when hidden is set */
+  #destUrlMsg[hidden], #utmSourceNote[hidden], #utmMediumNote[hidden], #utmCampaignNote[hidden],
+  #utmTermNote[hidden], #utmContentNote[hidden], #exampleTag[hidden], #qrHint[hidden], #qrCaption[hidden] {
+    display: none !important;
+  }
+</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","@id":"https://nymrel.com/#organization","email":"contact@nymrel.com","legalName":"JalenBuilds LLC","name":"Nymrel","url":"https://nymrel.com"}
+</script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body data-tool="qr" data-pro-product="qr-deluxe" data-pro-module="qr-pro">
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="mark">◆</span> nymrel<span class="sub">/ tool works</span></a>
+    <nav class="primary" aria-label="Primary">
+      <a href="/tools/ai-visibility-scorecard/">Scorecard</a>
+      <a href="/tools/llms-txt-generator/">llms.txt</a>
+      <a href="/tools/json-ld-generator/">JSON-LD</a>
+      <a href="/tools/qr-utm-generator/" class="active">QR + UTM</a>
+      <a href="/tools/token-spend-dashboard/">Token Ledger</a>
+      <a href="/tools/chatgpt-recommends/">ChatGPT Check</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <nav class="crumbs wrap"><a href="/">Tools</a> <span class="sep">/</span> QR + UTM Studio</nav>
+
+  <section class="hero" style="padding-top:3.5rem">
+    <div class="wrap">
+      <div class="kicker">QR + UTM Studio · free &amp; instant</div>
+      <div class="hero-glyph">
+        <div class="tool-glyph" aria-hidden="true">
+          <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 4h12v12h-12z M8 8h4v4h-4z"></path>
+            <path d="M32 4h12v12h-12z M36 8h4v4h-4z"></path>
+            <path d="M4 32h12v12h-12z M8 36h4v4h-4z"></path>
+            <line x1="2" y1="26" x2="46" y2="26"></line>
+          </svg>
+        </div>
+        <h1 style="max-width:12em;margin-bottom:0">Know which flyer brought them in.</h1>
+      </div>
+      <p class="lede">Generate a QR code with campaign tracking already baked into the link. Print it on a flyer, table tent, or business card — then watch the traffic show up in your analytics with the source, medium, and campaign already labeled.</p>
+      <div class="rule">Nothing you enter leaves your browser</div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="workbench">
+      <div class="controls">
+        <div class="hint-once" id="qrHint">
+          <span>Fill the four fields, print the code, and "flyer" shows up in your analytics.</span>
+          <button class="hx" id="qrHintClose" type="button" aria-label="Dismiss hint">×</button>
+        </div>
+
+        <button class="try-btn" id="tryExampleBtn" type="button" style="margin-bottom:1.1rem">
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4z"></path></svg>
+          Try an example
+        </button>
+
+        <label class="field">
+          <span class="lab">Where should it send people? * <span class="code-chip">destination url</span></span>
+          <input type="url" id="destUrl" placeholder="https://example.com/menu" required>
+          <span class="field-msg" id="destUrlMsg" aria-live="polite" hidden></span>
+        </label>
+        <label class="field">
+          <span class="lab">Where did they see it? * <span class="code-chip">utm_source</span></span>
+          <input type="text" id="utmSource" placeholder="flyer" required>
+          <span class="field-msg" id="utmSourceNote" aria-live="polite" hidden></span>
+        </label>
+        <label class="field">
+          <span class="lab">What kind of thing is it? * <span class="code-chip">utm_medium</span></span>
+          <input type="text" id="utmMedium" placeholder="print" required>
+          <span class="field-msg" id="utmMediumNote" aria-live="polite" hidden></span>
+        </label>
+        <label class="field">
+          <span class="lab">Which campaign? * <span class="code-chip">utm_campaign</span></span>
+          <input type="text" id="utmCampaign" placeholder="summer-launch" required>
+          <span class="field-msg" id="utmCampaignNote" aria-live="polite" hidden></span>
+        </label>
+
+        <details class="more-fields">
+          <summary>More fields</summary>
+          <label class="field" style="margin-top:0.9rem">
+            <span class="lab">Any specific ad or keyword? <span class="code-chip">utm_term</span></span>
+            <input type="text" id="utmTerm" placeholder="optional">
+            <span class="field-msg" id="utmTermNote" aria-live="polite" hidden></span>
+          </label>
+          <label class="field" style="margin-bottom:0.4rem">
+            <span class="lab">Which version or variant? <span class="code-chip">utm_content</span></span>
+            <input type="text" id="utmContent" placeholder="optional">
+            <span class="field-msg" id="utmContentNote" aria-live="polite" hidden></span>
+          </label>
+        </details>
+
+        <div class="grid-2" style="margin-top:1rem">
+          <label class="field" style="margin-bottom:0">
+            <span class="lab">Output size</span>
+            <select id="sizeSelect">
+              <option value="256">Small — 256px</option>
+              <option value="512" selected>Medium — 512px</option>
+              <option value="1024">Large — 1024px</option>
+            </select>
+          </label>
+          <label class="field" style="margin-bottom:0">
+            <span class="lab">Error correction</span>
+            <select id="ecSelect">
+              <option value="L">L — Low</option>
+              <option value="M" selected>M — Medium</option>
+              <option value="Q">Q — Quartile</option>
+              <option value="H">H — High</option>
+            </select>
+          </label>
+        </div>
+        <p class="help">Higher levels survive print damage and logos, but produce a denser code. H survives damage/logos best.</p>
+      </div>
+
+      <div class="output">
+        <div class="bench-head">
+          <span><span class="dot"></span>Tagged link &amp; QR code</span>
+          <span style="display:flex;align-items:center;gap:8px">
+            <span class="tag brass" id="exampleTag" hidden>Example data</span>
+            <span id="qrStatus" class="mono" style="font-size:0.68rem">Waiting for input</span>
+          </span>
+        </div>
+        <div style="padding:1.6rem">
+          <div class="qr-frame" id="qrWrap">
+            <div class="empty-state" id="qrEmptyState">
+              <div class="tool-glyph" aria-hidden="true">
+                <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 4h12v12h-12z M8 8h4v4h-4z"></path>
+                  <path d="M32 4h12v12h-12z M36 8h4v4h-4z"></path>
+                  <path d="M4 32h12v12h-12z M8 36h4v4h-4z"></path>
+                  <line x1="2" y1="26" x2="46" y2="26"></line>
+                </svg>
+              </div>
+              <p class="es-hint" id="qrEmpty">Enter a destination URL, source, medium, and campaign above to generate your code.</p>
+            </div>
+            <img id="qrImg" alt="QR code preview" style="display:none">
+          </div>
+          <p class="qr-caption mono" id="qrCaption" hidden></p>
+
+          <span class="lab">Tagged URL</span>
+          <div class="codebox" style="margin-bottom:1.4rem">
+            <button class="copybtn" id="copyUrlIcon" type="button">Copy</button>
+            <pre id="taggedUrlOut">Fill in the destination URL, source, medium, and campaign to see your tagged link.</pre>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary" id="downloadPngBtn" type="button">Download PNG</button>
+            <button class="btn" id="copyUrlBtn" type="button">Copy tagged URL</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="action-bar" id="qrActionBar" hidden>
+    <button class="btn btn-primary" id="downloadPngBtnMobile" type="button">Download PNG</button>
+    <button class="btn" id="copyUrlBtnMobile" type="button">Copy link</button>
+  </div>
+
+  <section class="section wrap">
+    <div class="kicker">Why this matters</div>
+    <h2 style="margin-bottom:1.6rem">Why tag your QR codes?</h2>
+    <div class="grid-3">
+      <div class="panel">
+        <div class="kicker" style="margin-bottom:0.6rem">01 · Tag</div>
+        <p style="margin:0;color:var(--ink-dim)">Add a source, medium, and campaign to the link before you print anything. Takes ten seconds.</p>
+      </div>
+      <div class="panel">
+        <div class="kicker" style="margin-bottom:0.6rem">02 · Print</div>
+        <p style="margin:0;color:var(--ink-dim)">Put the QR code on the flyer, table tent, or menu you were already printing. Nothing else changes.</p>
+      </div>
+      <div class="panel">
+        <div class="kicker" style="margin-bottom:0.6rem">03 · See it</div>
+        <p style="margin:0;color:var(--ink-dim)">"Flyer" shows up as the source in your analytics — Google Analytics, Plausible, whatever you use. No more guessing which channel worked.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap">
+    <div class="section-head">
+      <div>
+        <div class="kicker">Campaign log</div>
+        <h2 style="margin-bottom:0">Every code you've saved</h2>
+      </div>
+      <div class="qr-log-actions">
+        <button class="btn" id="saveLogBtn" type="button">Save to log</button>
+        <button class="btn" id="exportCsvBtn" type="button">Export CSV</button>
+        <button class="btn btn-ghost" id="clearLogBtn" type="button">Clear log</button>
+      </div>
+    </div>
+    <div class="panel" style="padding:0;overflow:auto">
+      <table class="data" id="logTable">
+        <thead>
+          <tr><th>Campaign</th><th>Tagged URL</th><th>Date</th><th></th></tr>
+        </thead>
+        <tbody id="logTableBody">
+          <tr><td colspan="4" style="color:var(--ink-faint)">Nothing logged yet — codes you save land here.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section wrap">
+    <div class="kicker">Pricing</div>
+    <h2 style="margin-bottom:1.6rem">Free to generate. $9 to go pro.</h2>
+    <div class="pricing">
+      <div class="price-card">
+        <div class="tier">Free</div>
+        <div class="amount">$0</div>
+        <ul>
+          <li>Unlimited QR codes with UTM tracking</li>
+          <li>PNG download at 256 / 512 / 1024px</li>
+          <li>Adjustable error correction (L / M / Q / H)</li>
+          <li>Campaign log saved in your browser</li>
+          <li>CSV export of your campaign log</li>
+        </ul>
+        <p style="color:var(--ink-faint);font-size:0.85rem;margin:0">No account. No watermark. No limit.</p>
+      </div>
+      <div class="price-card featured">
+        <div class="tier">Deluxe</div>
+        <div class="amount">$9 <small>one-time</small></div>
+        <ul>
+          <li>SVG vector export for print shops</li>
+          <li>Batch mode — paste a list of destinations, get a zip of tagged codes</li>
+          <li>Center-logo clearance guide for every error correction level</li>
+          <li>Print-ready A4 sheet layout</li>
+          <li>Unlocks on this page and downloads right after checkout</li>
+        </ul>
+        <button class="btn btn-primary" data-buy="qr-deluxe">Get Deluxe — $9</button>
+        <p class="help" style="color:var(--ink-faint);font-size:0.85rem;margin:0.9rem 0 0">Fill in your destination URL and UTM campaign fields above first — Deluxe packages your custom codes right in your browser.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap">
+    <div class="kicker">Questions, answered plainly</div>
+    <h2 style="margin-bottom:1.5rem">Before you ask</h2>
+    <div class="faq">
+      <details>
+        <summary>Is my data safe?</summary>
+        <p class="a">Yes. Everything runs in your browser. Nothing you enter — the URL or the campaign name — leaves your device. There's no server involved in generating a code.</p>
+      </details>
+      <details>
+        <summary>Do I need Google Analytics for the tracking to work?</summary>
+        <p class="a">No. UTM parameters are a URL standard, not a Google feature. Any analytics tool that reads UTM tags — GA4, Plausible, Fathom, Matomo — will show you the source, medium, and campaign automatically.</p>
+      </details>
+      <details>
+        <summary>How do I know which printed code is which?</summary>
+        <p class="a">Save each one to the campaign log below the generator. It keeps the campaign name, the tagged URL, and the date, right in your browser, so you can find it again when you reprint.</p>
+      </details>
+      <details>
+        <summary>What's the difference between the free tool and Deluxe?</summary>
+        <p class="a">Free gives you unlimited QR codes with UTM tracking, PNG downloads, and the campaign log. Deluxe adds SVG export for print shops, batch generation, a logo-clearance guide, and a ready-to-print A4 sheet layout.</p>
+      </details>
+      <details>
+        <summary>How do I add my logo to the middle of the QR code?</summary>
+        <p class="a">Keep it small and use a high error-correction level (Q or H) so the code still scans with part of the middle covered. Deluxe includes a clearance guide showing exactly how much you can safely cover at each level.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap cols">
+    <div>
+      <p class="fh">Nymrel Tools</p>
+      <p style="max-width:26em">Small, sharp tools from a working studio. Everything runs in your browser; nothing you paste leaves your device.</p>
+      <p class="mono" style="font-size:0.78rem">© <span data-year>2026</span> JalenBuilds LLC</p>
+      <p class="mono" style="font-size:0.78rem"><a href="https://nymrel.com?utm_source=jalenbuilds-tools&amp;utm_medium=footer-credit&amp;utm_campaign=built-by-nymrel" rel="author">Built by Nymrel</a></p>
+    </div>
+    <div>
+      <p class="fh">Catalog</p>
+      <ul>
+        <li><a href="/tools/ai-visibility-scorecard/">AI Visibility Scorecard</a></li>
+        <li><a href="/tools/llms-txt-generator/">llms.txt Generator</a></li>
+        <li><a href="/tools/json-ld-generator/">JSON-LD Studio</a></li>
+        <li><a href="/tools/qr-utm-generator/">QR + UTM Studio</a></li>
+        <li><a href="/tools/token-spend-dashboard/">Token Ledger</a></li>
+        <li><a href="/tools/chatgpt-recommends/">ChatGPT Check</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="fh">Studio</p>
+      <ul>
+        <li><a href="mailto:contact@nymrel.com">contact@nymrel.com</a></li>
+        <li><a href="/llms.txt">llms.txt</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<canvas id="qrCanvas" style="display:none" aria-hidden="true"></canvas>
+
+<script src="/assets/vendor/qrcode.js"></script>
+<script src="/assets/checkout-config.js"></script>
+<script src="/assets/site.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var destUrlEl = document.getElementById('destUrl');
+  var sourceEl = document.getElementById('utmSource');
+  var mediumEl = document.getElementById('utmMedium');
+  var campaignEl = document.getElementById('utmCampaign');
+  var termEl = document.getElementById('utmTerm');
+  var contentEl = document.getElementById('utmContent');
+  var sizeSelect = document.getElementById('sizeSelect');
+  var ecSelect = document.getElementById('ecSelect');
+
+  var taggedUrlOut = document.getElementById('taggedUrlOut');
+  var qrImg = document.getElementById('qrImg');
+  var qrWrap = document.getElementById('qrWrap');
+  var qrEmpty = document.getElementById('qrEmpty');
+  var qrEmptyWrap = document.getElementById('qrEmptyState');
+  var qrCaption = document.getElementById('qrCaption');
+  var qrStatus = document.getElementById('qrStatus');
+  var copyUrlBtn = document.getElementById('copyUrlBtn');
+  var copyUrlIcon = document.getElementById('copyUrlIcon');
+  var downloadPngBtn = document.getElementById('downloadPngBtn');
+  var copyUrlBtnMobile = document.getElementById('copyUrlBtnMobile');
+  var downloadPngBtnMobile = document.getElementById('downloadPngBtnMobile');
+  var saveLogBtn = document.getElementById('saveLogBtn');
+  var exportCsvBtn = document.getElementById('exportCsvBtn');
+  var clearLogBtn = document.getElementById('clearLogBtn');
+  var logTableBody = document.getElementById('logTableBody');
+  var tryExampleBtn = document.getElementById('tryExampleBtn');
+  var exampleTag = document.getElementById('exampleTag');
+  var hintEl = document.getElementById('qrHint');
+  var hintCloseBtn = document.getElementById('qrHintClose');
+
+  var LOG_KEY = 'jbt.qr.log';
+  var EMPTY_MSG = 'Enter a destination URL, source, medium, and campaign above to generate your code.';
+  var NOT_READY_MSG = 'Fill in the destination URL, source, medium, and campaign to see your tagged link.';
+  var ENGINE_OK = typeof window.qrcode === 'function';
+  var currentTaggedUrl = '';
+
+  if (!ENGINE_OK) {
+    var outPanel = document.querySelector('.output');
+    if (outPanel) {
+      outPanel.innerHTML =
+        '<div class="bench-head"><span><span class="dot"></span>Tagged link &amp; QR code</span></div>' +
+        '<div style="padding:1.6rem;color:var(--ink-dim)">The QR engine did not load, so codes cannot be generated right now. Refresh the page or check your connection — the rest of this page still works.</div>';
+    }
+  }
+
+  function sanitizeSlug(v) {
+    return String(v || '')
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9\-_.~]/g, '')
+      .replace(/-+/g, '-');
+  }
+
+  function showFieldNote(noteEl, raw, clean) {
+    if (!noteEl) return;
+    if (clean && clean !== raw) {
+      noteEl.className = 'field-msg';
+      noteEl.textContent = 'will be saved as: ' + clean;
+      noteEl.hidden = false;
+    } else {
+      noteEl.hidden = true;
+    }
+  }
+
+  function wireSanitizer(el, noteEl) {
+    if (!el) return;
+    el.addEventListener('input', function () {
+      el.dataset.touched = '1';
+      el.classList.remove('err');
+      var start = el.selectionStart;
+      var raw = el.value;
+      var clean = sanitizeSlug(raw);
+      if (clean !== raw) {
+        var beforeCursor = sanitizeSlug(raw.slice(0, start));
+        el.value = clean;
+        if (el.setSelectionRange) el.setSelectionRange(beforeCursor.length, beforeCursor.length);
+      }
+      showFieldNote(noteEl, raw, clean);
+      if (exampleActive) setExampleActive(false);
+      update();
+    });
+    el.addEventListener('blur', function () {
+      if (el.dataset.touched !== '1' || !noteEl) return;
+      if (sanitizeSlug(el.value) === '' && el.hasAttribute('required')) {
+        el.classList.add('err');
+        noteEl.className = 'field-msg err';
+        noteEl.textContent = 'Needed to tag the link.';
+        noteEl.hidden = false;
+      }
+    });
+  }
+
+  /* fills a field the same way typing would: sanitize, show the same note, mark it touched */
+  function fillExampleField(el, value, noteEl) {
+    if (!el) return;
+    el.dataset.touched = '1';
+    el.classList.remove('err');
+    var clean = sanitizeSlug(value);
+    el.value = clean;
+    showFieldNote(noteEl, value, clean);
+  }
+
+  wireSanitizer(sourceEl, document.getElementById('utmSourceNote'));
+  wireSanitizer(mediumEl, document.getElementById('utmMediumNote'));
+  wireSanitizer(campaignEl, document.getElementById('utmCampaignNote'));
+  wireSanitizer(termEl, document.getElementById('utmTermNote'));
+  wireSanitizer(contentEl, document.getElementById('utmContentNote'));
+
+  var destUrlMsg = document.getElementById('destUrlMsg');
+  if (destUrlEl) {
+    destUrlEl.addEventListener('input', function () {
+      destUrlEl.dataset.touched = '1';
+      destUrlEl.classList.remove('err', 'ok');
+      if (destUrlMsg) destUrlMsg.hidden = true;
+      if (exampleActive) setExampleActive(false);
+      update();
+    });
+    destUrlEl.addEventListener('blur', function () {
+      if (destUrlEl.dataset.touched !== '1' || !destUrlMsg) return;
+      var raw = destUrlEl.value.trim();
+      if (!raw) {
+        destUrlEl.classList.add('err');
+        destUrlMsg.className = 'field-msg err';
+        destUrlMsg.textContent = 'Needed to build the tagged link.';
+        destUrlMsg.hidden = false;
+        return;
+      }
+      if (getValidUrl()) {
+        destUrlEl.classList.add('ok');
+        destUrlEl.classList.remove('err');
+        destUrlMsg.hidden = true;
+      } else {
+        destUrlEl.classList.add('err');
+        destUrlEl.classList.remove('ok');
+        destUrlMsg.className = 'field-msg err';
+        destUrlMsg.textContent = "That's missing its .com — full address like https://acme.com";
+        destUrlMsg.hidden = false;
+      }
+    });
+  }
+  if (sizeSelect) sizeSelect.addEventListener('change', update);
+  if (ecSelect) ecSelect.addEventListener('change', update);
+
+  function getValidUrl() {
+    var raw = ((destUrlEl && destUrlEl.value) || '').trim();
+    if (!raw) return null;
+    try {
+      var u = new URL(raw);
+      if (u.protocol !== 'http:' && u.protocol !== 'https:') return null;
+      return u;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function isReady() {
+    return !!getValidUrl() &&
+      sanitizeSlug(sourceEl && sourceEl.value) !== '' &&
+      sanitizeSlug(mediumEl && mediumEl.value) !== '' &&
+      sanitizeSlug(campaignEl && campaignEl.value) !== '';
+  }
+
+  function buildTaggedUrl() {
+    var u = getValidUrl();
+    if (!u) return '';
+    var source = sanitizeSlug(sourceEl.value);
+    var medium = sanitizeSlug(mediumEl.value);
+    var campaign = sanitizeSlug(campaignEl.value);
+    var term = sanitizeSlug(termEl && termEl.value);
+    var content = sanitizeSlug(contentEl && contentEl.value);
+    if (source) u.searchParams.set('utm_source', source);
+    if (medium) u.searchParams.set('utm_medium', medium);
+    if (campaign) u.searchParams.set('utm_campaign', campaign);
+    if (term) u.searchParams.set('utm_term', term);
+    if (content) u.searchParams.set('utm_content', content);
+    return u.toString();
+  }
+
+  function setActionBarVisible(on) {
+    document.body.classList.toggle('has-action-bar', !!on);
+    var bar = document.getElementById('qrActionBar');
+    if (bar) bar.hidden = !on;
+  }
+
+  function update() {
+    if (!ENGINE_OK || !taggedUrlOut) return;
+
+    if (!isReady()) {
+      currentTaggedUrl = '';
+      taggedUrlOut.textContent = NOT_READY_MSG;
+      if (qrImg) qrImg.style.display = 'none';
+      if (qrEmpty) qrEmpty.textContent = EMPTY_MSG;
+      if (qrEmptyWrap) qrEmptyWrap.style.display = '';
+      if (qrWrap) qrWrap.classList.remove('has-code');
+      if (qrStatus) qrStatus.textContent = 'Waiting for input';
+      if (qrCaption) qrCaption.hidden = true;
+      setActionBarVisible(false);
+      return;
+    }
+
+    currentTaggedUrl = buildTaggedUrl();
+    taggedUrlOut.textContent = currentTaggedUrl;
+
+    try {
+      var qr = window.qrcode(0, ecSelect ? ecSelect.value : 'M');
+      qr.addData(currentTaggedUrl);
+      qr.make();
+      if (qrImg) {
+        qrImg.src = qr.createDataURL(6, 4);
+        qrImg.style.display = '';
+      }
+      if (qrEmptyWrap) qrEmptyWrap.style.display = 'none';
+      if (qrWrap) qrWrap.classList.add('has-code');
+      if (qrStatus) qrStatus.textContent = 'Live';
+      if (qrCaption) {
+        var sizeVal = (sizeSelect && sizeSelect.value) || '512';
+        var ecVal = (ecSelect && ecSelect.value) || 'M';
+        qrCaption.textContent = sizeVal + 'px · survives logos: ' + ecVal;
+        qrCaption.hidden = false;
+      }
+      setActionBarVisible(true);
+    } catch (e) {
+      if (qrImg) qrImg.style.display = 'none';
+      if (qrEmpty) qrEmpty.textContent = 'Could not generate a QR code for that URL. Double-check it and try again.';
+      if (qrEmptyWrap) qrEmptyWrap.style.display = '';
+      if (qrWrap) qrWrap.classList.remove('has-code');
+      if (qrStatus) qrStatus.textContent = 'Error';
+      if (qrCaption) qrCaption.hidden = true;
+      setActionBarVisible(false);
+    }
+  }
+
+  function copyTaggedUrl() {
+    if (!currentTaggedUrl) { JB.toast('Fill in the required fields first'); return; }
+    JB.copy(currentTaggedUrl, 'Tagged URL copied');
+  }
+  if (copyUrlBtn) copyUrlBtn.addEventListener('click', copyTaggedUrl);
+  if (copyUrlIcon) copyUrlIcon.addEventListener('click', copyTaggedUrl);
+  if (copyUrlBtnMobile) copyUrlBtnMobile.addEventListener('click', copyTaggedUrl);
+
+  function downloadPng() {
+    if (!ENGINE_OK) { JB.toast('QR engine unavailable'); return; }
+    if (!currentTaggedUrl) { JB.toast('Fill in the required fields first'); return; }
+    var ec = ecSelect ? ecSelect.value : 'M';
+    var size = parseInt((sizeSelect && sizeSelect.value) || '512', 10);
+    var qr = window.qrcode(0, ec);
+    qr.addData(currentTaggedUrl);
+    qr.make();
+    var count = qr.getModuleCount();
+    var margin = 4;
+    var total = count + margin * 2;
+    var cell = Math.max(1, Math.floor(size / total));
+    var canvasSize = size; // exact advertised size; leftover pixels widen the quiet zone
+    var offset = Math.floor((size - cell * count) / 2);
+    var canvas = document.getElementById('qrCanvas');
+    if (!canvas) return;
+    canvas.width = canvasSize;
+    canvas.height = canvasSize;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvasSize, canvasSize);
+    ctx.fillStyle = '#0b0b0e';
+    for (var row = 0; row < count; row++) {
+      for (var col = 0; col < count; col++) {
+        if (qr.isDark(row, col)) {
+          ctx.fillRect(offset + col * cell, offset + row * cell, cell, cell);
+        }
+      }
+    }
+    var dataUrl = canvas.toDataURL('image/png');
+    var a = document.createElement('a');
+    a.href = dataUrl;
+    var name = sanitizeSlug(campaignEl && campaignEl.value) || 'qr-code';
+    a.download = name + '-' + size + 'px.png';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    JB.toast('PNG downloaded');
+  }
+  if (downloadPngBtn) downloadPngBtn.addEventListener('click', downloadPng);
+  if (downloadPngBtnMobile) downloadPngBtnMobile.addEventListener('click', downloadPng);
+
+  /* ---------- example data + first-run hint ---------- */
+  var exampleActive = false;
+  function setExampleActive(on) {
+    exampleActive = on;
+    if (exampleTag) exampleTag.hidden = !on;
+  }
+
+  if (tryExampleBtn) {
+    tryExampleBtn.addEventListener('click', function () {
+      if (destUrlEl) {
+        destUrlEl.value = 'https://sunriseroast.coffee/menu';
+        destUrlEl.dataset.touched = '1';
+        destUrlEl.classList.remove('err', 'ok');
+        if (destUrlMsg) destUrlMsg.hidden = true;
+      }
+      fillExampleField(sourceEl, 'Flyer', document.getElementById('utmSourceNote'));
+      fillExampleField(mediumEl, 'Print', document.getElementById('utmMediumNote'));
+      fillExampleField(campaignEl, 'Window Flyer', document.getElementById('utmCampaignNote'));
+      setExampleActive(true);
+      update();
+      JB.toast('Example filled in — edit any field to make it yours');
+    });
+  }
+
+  var HINT_KEY = 'jbt.qr.hinted';
+  if (hintEl) {
+    try { if (localStorage.getItem(HINT_KEY) === '1') hintEl.hidden = true; } catch (e) {}
+  }
+  if (hintCloseBtn) {
+    hintCloseBtn.addEventListener('click', function () {
+      if (hintEl) hintEl.hidden = true;
+      try { localStorage.setItem(HINT_KEY, '1'); } catch (e) {}
+    });
+  }
+
+  /* ---------- campaign log ---------- */
+  function loadLog() {
+    try {
+      var raw = localStorage.getItem(LOG_KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) {
+      return [];
+    }
+  }
+  function persistLog(arr) {
+    try { localStorage.setItem(LOG_KEY, JSON.stringify(arr)); } catch (e) {}
+  }
+
+  function renderLog() {
+    if (!logTableBody) return;
+    var entries = loadLog();
+    logTableBody.innerHTML = '';
+
+    if (!entries.length) {
+      var emptyTr = document.createElement('tr');
+      var emptyTd = document.createElement('td');
+      emptyTd.colSpan = 4;
+      emptyTd.style.color = 'var(--ink-faint)';
+      emptyTd.textContent = 'Nothing logged yet — codes you save land here.';
+      emptyTr.appendChild(emptyTd);
+      logTableBody.appendChild(emptyTr);
+      return;
+    }
+
+    entries.forEach(function (entry, idx) {
+      var tr = document.createElement('tr');
+
+      var tdName = document.createElement('td');
+      tdName.textContent = entry.name || 'untitled';
+      tr.appendChild(tdName);
+
+      var tdUrl = document.createElement('td');
+      tdUrl.className = 'url-cell';
+      tdUrl.textContent = entry.url || '';
+      tdUrl.title = entry.url || '';
+      tr.appendChild(tdUrl);
+
+      var tdDate = document.createElement('td');
+      tdDate.textContent = entry.date || '';
+      tr.appendChild(tdDate);
+
+      var tdActions = document.createElement('td');
+      tdActions.className = 'row-actions';
+
+      var copyBtn = document.createElement('button');
+      copyBtn.type = 'button';
+      copyBtn.textContent = 'Copy';
+      copyBtn.setAttribute('data-log-copy', String(idx));
+
+      var delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.textContent = 'Delete';
+      delBtn.setAttribute('data-log-del', String(idx));
+
+      tdActions.appendChild(copyBtn);
+      tdActions.appendChild(delBtn);
+      tr.appendChild(tdActions);
+
+      logTableBody.appendChild(tr);
+    });
+  }
+
+  if (logTableBody) {
+    logTableBody.addEventListener('click', function (e) {
+      var copyBtn = e.target.closest && e.target.closest('[data-log-copy]');
+      var delBtn = e.target.closest && e.target.closest('[data-log-del]');
+      if (!copyBtn && !delBtn) return;
+      var entries = loadLog();
+      if (copyBtn) {
+        var i = parseInt(copyBtn.getAttribute('data-log-copy'), 10);
+        if (entries[i]) JB.copy(entries[i].url, 'Tagged URL copied');
+      } else if (delBtn) {
+        var j = parseInt(delBtn.getAttribute('data-log-del'), 10);
+        entries.splice(j, 1);
+        persistLog(entries);
+        renderLog();
+        JB.toast('Removed from log');
+      }
+    });
+  }
+
+  if (saveLogBtn) {
+    saveLogBtn.addEventListener('click', function () {
+      if (!currentTaggedUrl) { JB.toast('Fill in the required fields first'); return; }
+      var entries = loadLog();
+      entries.unshift({
+        name: sanitizeSlug(campaignEl && campaignEl.value) || 'untitled',
+        url: currentTaggedUrl,
+        date: new Date().toISOString().slice(0, 10)
+      });
+      persistLog(entries);
+      renderLog();
+      JB.toast('Saved to campaign log');
+    });
+  }
+
+  function csvField(v) {
+    var s = String(v === null || v === undefined ? '' : v);
+    /* neutralize formula-leading cells (= + - @) so spreadsheets won't execute them */
+    if (/^[=+\-@\t\r]/.test(s) && !/^-?\d+(\.\d+)?$/.test(s)) s = "'" + s;
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  if (exportCsvBtn) {
+    exportCsvBtn.addEventListener('click', function () {
+      var entries = loadLog();
+      if (!entries.length) { JB.toast('Nothing to export yet'); return; }
+      var rows = [['Campaign', 'Tagged URL', 'Date'].map(csvField).join(',')];
+      entries.forEach(function (e) {
+        rows.push([csvField(e.name), csvField(e.url), csvField(e.date)].join(','));
+      });
+      JB.download('qr-utm-campaign-log.csv', rows.join('\r\n'), 'text/csv;charset=utf-8');
+    });
+  }
+
+  if (clearLogBtn) {
+    clearLogBtn.addEventListener('click', function () {
+      persistLog([]);
+      renderLog();
+      JB.toast('Campaign log cleared');
+    });
+  }
+
+  renderLog();
+  update();
+})();
+</script>
+</body>
+</html>
