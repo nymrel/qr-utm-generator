@@ -41,7 +41,7 @@ disk will render unstyled.
 | `assets/checkout-config.js` | The checkout registry template |
 | `assets/fonts/` | The three fonts the page uses |
 
-`tools/qr-utm-generator/index.html` is byte-for-byte the file nymrel.com serves.
+`tools/qr-utm-generator/index.html` is the source intended for Nymrel's canonical QR + UTM Studio surface. This repository alone does not verify the current deployed bytes.
 
 ## A note on the paid tier
 
@@ -51,8 +51,24 @@ The free tool produces a working, trackable code on its own.
 
 ## Privacy
 
-Nothing you type leaves your browser. The code is drawn on your device and the tool
-makes no server calls.
+Destination URLs, campaign fields, tagged links, and QR images are processed in your
+browser. The tool does not navigate to or upload the destination. Campaign-log entries
+are stored locally only when you choose **Save to log**.
+
+The hosted nymrel.com page loads aggregate Vercel Web Analytics. QR + UTM Studio does
+not attach entered or generated product values to analytics requests. Paid-tier
+checkout verification and artifact delivery are separate server-backed boundaries.
+
+## Quality gates
+
+The product stays dependency-free static HTML, CSS, and JavaScript. Node dependencies
+exist only for repeatable verification. With Node 24.20.0 and npm 11.19.1:
+
+```sh
+npm ci --ignore-scripts
+npx playwright install chromium
+npm run check
+```
 
 ## Credits
 
