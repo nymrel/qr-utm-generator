@@ -77,7 +77,8 @@ used under the MIT license. QR Code is a registered trademark of DENSO WAVE
 INCORPORATED.
 
 Instrument Serif, Instrument Sans, and IBM Plex Mono are used under the SIL Open
-Font License.
+Font License. Their [copyright notices, license texts, and asset inventory](assets/fonts/README.md)
+are included with the bundled fonts.
 
 ## Who built it
 
