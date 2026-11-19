@@ -24,10 +24,39 @@
 
   /* ---------- clipboard ---------- */
   JB.copy = function (text, msg) {
-    function done() { JB.toast(msg || "Copied to clipboard"); }
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(done, function () { fallback(); });
-    } else { fallback(); }
+    var previousFocus = document.activeElement;
+    function restoreFocus() {
+      if (previousFocus && previousFocus.isConnected) previousFocus.focus();
+    }
+    function done() { restoreFocus(); JB.toast(msg || "Copied to clipboard"); return true; }
+    function manualCopy() {
+      var dialog = document.createElement("dialog");
+      dialog.setAttribute("aria-label", "Copy your result manually");
+      dialog.style.cssText = "width:calc(100% - 2rem);max-width:36rem;max-height:90vh;margin:auto;padding:1.25rem;border:1px solid #666;border-radius:12px;background:#fff;color:#222;";
+      var label = document.createElement("label");
+      label.textContent = "Automatic copy is unavailable. Select this result and use your device's Copy command.";
+      var field = document.createElement("textarea");
+      field.value = text;
+      field.readOnly = true;
+      field.rows = 8;
+      field.style.cssText = "display:block;width:100%;margin:1rem 0;font:16px/1.5 monospace;color:#222;background:#fff;";
+      label.appendChild(field);
+      var close = document.createElement("button");
+      close.type = "button";
+      close.className = "btn";
+      close.textContent = "Close";
+      close.style.minHeight = "44px";
+      close.addEventListener("click", function () { dialog.close(); });
+      dialog.addEventListener("close", function () { dialog.remove(); restoreFocus(); });
+      dialog.appendChild(label);
+      dialog.appendChild(close);
+      document.body.appendChild(dialog);
+      dialog.showModal();
+      field.focus();
+      field.select();
+      JB.toast("Automatic copy failed — your result is ready to copy manually");
+      return false;
+    }
     function fallback() {
       var ta = document.createElement("textarea");
       ta.value = text;
@@ -35,9 +64,17 @@
       ta.style.opacity = "0";
       document.body.appendChild(ta);
       ta.select();
-      try { document.execCommand("copy"); done(); } catch (e) { JB.toast("Copy failed — select the text manually"); }
-      document.body.removeChild(ta);
+      var copied = false;
+      try { copied = document.execCommand("copy"); } catch (e) { /* offer manual recovery */ }
+      ta.remove();
+      return copied ? done() : manualCopy();
     }
+    return Promise.resolve().then(function () {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text).then(done, fallback);
+      }
+      return fallback();
+    }).catch(fallback);
   };
 
   /* ---------- file download ---------- */
