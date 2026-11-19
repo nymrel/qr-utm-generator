@@ -365,7 +365,7 @@
           <tr><th>Campaign</th><th>Tagged URL</th><th>Date</th><th></th></tr>
         </thead>
         <tbody id="logTableBody">
-          <tr><td colspan="4" style="color:var(--ink-faint)">Nothing logged yet — codes you save land here.</td></tr>
+          <tr><td colspan="4" style="color:var(--ink-dim)">Nothing logged yet — codes you save land here.</td></tr>
         </tbody>
       </table>
     </div>
@@ -821,7 +821,7 @@
       var emptyTr = document.createElement('tr');
       var emptyTd = document.createElement('td');
       emptyTd.colSpan = 4;
-      emptyTd.style.color = 'var(--ink-faint)';
+      emptyTd.style.color = 'var(--ink-dim)';
       emptyTd.textContent = 'Nothing logged yet — codes you save land here.';
       emptyTr.appendChild(emptyTd);
       logTableBody.appendChild(emptyTr);
